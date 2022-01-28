@@ -6,6 +6,9 @@ import {
   getPost,
   getFeaturedPosts,
   getPosts,
+  seatchPost,
+  getRelatedPosts,
+  uploadImage,
 } from "../controllers/post.js";
 import multer from "../middlewares/multer.js";
 import { parseData } from "../middlewares/parseDataHelper.js";
@@ -33,8 +36,10 @@ router
   );
 
 router.route("/:postId").delete(deletePost);
-router.route("/single/:postId").get(getPost);
+router.route("/single/:slug").get(getPost);
 router.route("/featured-posts").get(getFeaturedPosts);
 router.route("/posts").get(getPosts);
+router.route("/search").get(seatchPost);
+router.route("/related-posts/:postId").get(getRelatedPosts);
 
 export default router;

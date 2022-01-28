@@ -141,17 +141,16 @@ export const updatePost = async (req, res) => {
 };
 
 export const getPost = async (req, res) => {
-  const { postId } = req.params;
+  const { slug } = req.params;
 
-  if (!isValidObjectId(postId))
-    return res.status(401).json({ error: "Invalid request! " });
+  if (!slug) return res.status(401).json({ error: "Invalid request! " });
 
-  const post = await Post.findById(postId);
+  const post = await Post.findOne({ slug });
   if (!post) return res.status(404).json({ error: "Post Not Found! " });
 
   const featured = await isFeaturedPost(post._id);
 
-  const { title, meta, author, slug, content, tags, createdAt } = post;
+  const { title, meta, author, content, tags, createdAt } = post;
 
   res.status(201).json({
     message: "post Created",
@@ -196,6 +195,52 @@ export const getPosts = async (req, res) => {
 
   res.json({
     posts: posts.map((post) => ({
+      id: post._id,
+      title: post.title,
+      meta: post.meta,
+      slug: post.slug,
+      thumbnail: post.thumbnail?.url,
+      author: post.author,
+    })),
+  });
+};
+
+export const seatchPost = async (req, res) => {
+  const { title } = req.query;
+  if (!title.trim())
+    return res.status(401).json({ error: "search query is missing!" });
+
+  const posts = await Post.find({ title: { $regex: title, $options: "i" } });
+
+  res.json({
+    posts: posts.map((post) => ({
+      id: post._id,
+      title: post.title,
+      meta: post.meta,
+      slug: post.slug,
+      thumbnail: post.thumbnail?.url,
+      author: post.author,
+    })),
+  });
+};
+
+export const getRelatedPosts = async (req, res) => {
+  const { postId } = req.params;
+  if (!isValidObjectId(postId))
+    return res.status(401).json({ error: "Invalid request! " });
+
+  const post = await Post.findById(postId);
+  if (!post) return res.status(401).json({ error: "Post not found! " });
+
+  const relatedPosts = await Post.find({
+    tags: { $in: [...post.tags] },
+    _id: { $ne: post._id },
+  })
+    .sort({ createdAt: -1 })
+    .limit(5);
+
+  res.json({
+    posts: relatedPosts.map((post) => ({
       id: post._id,
       title: post.title,
       meta: post.meta,
