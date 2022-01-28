@@ -81,6 +81,7 @@ export const deletePost = async (req, res) => {
       return res.status(404).json({ error: `Couldn't remove thumbnail` });
   }
   await Post.findByIdAndDelete(postId);
+  await removeFromFeaturedPosts(postId);
   res.status(200).json({ message: "Post removed successfully!" });
 };
 
@@ -166,5 +167,22 @@ export const getPost = async (req, res) => {
       tags,
       createdAt,
     },
+  });
+};
+
+export const getFeaturedPost = async (req, res) => {
+  const featuredPosts = await FeaturedPost.find({})
+    .sort({ createdAt: -1 })
+    .limit(4)
+    .populate("post");
+  res.json({
+    posts: featuredPosts.map(({ post }) => ({
+      id: post._id,
+      title: post.title,
+      meta: post.meta,
+      slug: post.slug,
+      thumbnail: post.thumbnail?.url,
+      author: post.author,
+    })),
   });
 };
