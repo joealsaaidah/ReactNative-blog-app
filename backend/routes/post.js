@@ -1,5 +1,5 @@
 import express from "express";
-import { createPost, latestPost } from "../controllers/post.js";
+import { createPost } from "../controllers/post.js";
 import multer from "../middlewares/multer.js";
 import { parseData } from "../middlewares/parseDataHelper.js";
 import { postValidator, validate } from "../middlewares/postValidator.js";
@@ -15,6 +15,5 @@ router
     validate,
     createPost
   );
-router.route("/latest").get(latestPost);
 
 export default router;
