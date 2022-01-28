@@ -2,15 +2,19 @@ import "dotenv/config";
 import connectToDB from "./config/db.js";
 import express from "express";
 import morgan from "morgan";
+
 import postRouter from "./routes/post.js";
 
 // connect to database
 connectToDB();
 
+//setup
+
 //init express app
 const app = express();
 
 //middlewares
+app.use(express.json());
 app.use(morgan("dev"));
 app.use("/api/post", postRouter);
 
