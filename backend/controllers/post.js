@@ -24,6 +24,11 @@ const removeFromFeaturedPosts = async (postId) => {
   await FeaturedPost.findOneAndDelete({ post: postId });
 };
 
+const isFeaturedPost = async (postId) => {
+  const post = await FeaturedPost.findOne({ post: postId });
+  return post ? true : false;
+};
+
 export const createPost = async (req, res) => {
   const { title, content, meta, tags, slug, author, featured } = req.body;
   const { file } = req;
@@ -129,6 +134,37 @@ export const updatePost = async (req, res) => {
       author: post.author,
       content,
       featured,
+      tags,
+    },
+  });
+};
+
+export const getPost = async (req, res) => {
+  const { postId } = req.params;
+
+  if (!isValidObjectId(postId))
+    return res.status(401).json({ error: "Invalid request! " });
+
+  const post = await Post.findById(postId);
+  if (!post) return res.status(404).json({ error: "Post Not Found! " });
+
+  const featured = await isFeaturedPost(post._id);
+
+  const { title, meta, author, slug, content, tags, createdAt } = post;
+
+  res.status(201).json({
+    message: "post Created",
+    post: {
+      id: post._id,
+      title,
+      meta,
+      slug,
+      thumbnail: post.thumbnail?.url,
+      author,
+      content,
+      featured,
+      tags,
+      createdAt,
     },
   });
 };
