@@ -4,7 +4,8 @@ import {
   deletePost,
   updatePost,
   getPost,
-  getFeaturedPost,
+  getFeaturedPosts,
+  getPosts,
 } from "../controllers/post.js";
 import multer from "../middlewares/multer.js";
 import { parseData } from "../middlewares/parseDataHelper.js";
@@ -33,6 +34,7 @@ router
 
 router.route("/:postId").delete(deletePost);
 router.route("/single/:postId").get(getPost);
-router.route("/featured-posts").get(getFeaturedPost);
+router.route("/featured-posts").get(getFeaturedPosts);
+router.route("/posts").get(getPosts);
 
 export default router;

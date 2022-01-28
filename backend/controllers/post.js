@@ -170,13 +170,32 @@ export const getPost = async (req, res) => {
   });
 };
 
-export const getFeaturedPost = async (req, res) => {
+export const getFeaturedPosts = async (req, res) => {
   const featuredPosts = await FeaturedPost.find({})
     .sort({ createdAt: -1 })
     .limit(4)
     .populate("post");
   res.json({
     posts: featuredPosts.map(({ post }) => ({
+      id: post._id,
+      title: post.title,
+      meta: post.meta,
+      slug: post.slug,
+      thumbnail: post.thumbnail?.url,
+      author: post.author,
+    })),
+  });
+};
+
+export const getPosts = async (req, res) => {
+  const { pageNo = 0, limit = 10 } = req.query;
+  const posts = await Post.find({})
+    .sort({ createdAt: -1 })
+    .skip(parseInt(pageNo) * parseInt(limit))
+    .limit(parseInt(limit));
+
+  res.json({
+    posts: posts.map((post) => ({
       id: post._id,
       title: post.title,
       meta: post.meta,
