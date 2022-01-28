@@ -20,6 +20,10 @@ const addToFeaturedPosts = async (postId) => {
   });
 };
 
+const removeFromFeaturedPosts = async (postId) => {
+  await FeaturedPost.findOneAndDelete({ post: postId });
+};
+
 export const createPost = async (req, res) => {
   const { title, content, meta, tags, slug, author, featured } = req.body;
   const { file } = req;
@@ -35,7 +39,6 @@ export const createPost = async (req, res) => {
       file.path,
       { public_id: `blog-app/posts/${randomstring.generate(15)}` }
     );
-    /* { public_id: `blog-app/posts/${randomstring.generate(15)}` } */
 
     newPost.thumbnail = { url: secure_url, public_id };
   }
@@ -74,4 +77,58 @@ export const deletePost = async (req, res) => {
   }
   await Post.findByIdAndDelete(postId);
   res.status(200).json({ message: "Post removed successfully!" });
+};
+
+export const updatePost = async (req, res) => {
+  const { title, content, meta, tags, slug, author, featured } = req.body;
+  const { file } = req;
+  const { postId } = req.params;
+
+  if (!isValidObjectId(postId))
+    return res.status(401).json({ error: "Invalid request! " });
+
+  const post = await Post.findById(postId);
+  if (!post) return res.status(404).json({ error: "Post Not Found! " });
+
+  const public_id = post.thumbnail?.public_id;
+  if (public_id && file) {
+    const { result, error } = await cloudinary.uploader.destroy(public_id);
+    if (result !== "ok")
+      return res.status(404).json({ error: `Couldn't remove thumbnail` });
+  }
+
+  if (file) {
+    const { secure_url, public_id } = await cloudinary.uploader.upload(
+      file.path,
+      { public_id: `blog-app/posts/${randomstring.generate(15)}` }
+    );
+
+    post.thumbnail = { url: secure_url, public_id };
+  }
+
+  post.title = title;
+  post.content = content;
+  post.meta = meta;
+  post.tags = tags;
+  post.slug = slug;
+  post.author = author;
+
+  if (featured) await addToFeaturedPosts(post._id);
+  else await removeFromFeaturedPosts(post._id);
+
+  await post.save();
+
+  res.status(201).json({
+    message: "post Created",
+    post: {
+      id: post._id,
+      title,
+      meta,
+      slug,
+      thumbnail: post.thumbnail?.url,
+      author: post.author,
+      content,
+      featured,
+    },
+  });
 };
