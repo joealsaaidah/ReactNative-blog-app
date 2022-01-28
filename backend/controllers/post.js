@@ -1,10 +1,9 @@
 import Post from "../models/post.js";
 
-export const createPost = (req, res) => {
+export const createPost = async (req, res) => {
   const { title, content, meta, tags, slug, author } = req.body;
-  console.log(req.file);
   const newPost = new Post({ title, content, meta, tags, slug, author });
-
+  await newPost.save();
   res.status(201).json({ message: "post Created", post: newPost });
 };
 export const latestPost = (req, res) => {

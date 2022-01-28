@@ -1,6 +1,7 @@
 import "dotenv/config";
 import connectToDB from "./config/db.js";
 import express from "express";
+import "express-async-errors";
 import morgan from "morgan";
 
 import postRouter from "./routes/post.js";
@@ -17,6 +18,11 @@ const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
 app.use("/api/post", postRouter);
+
+// should be the last middleware
+app.use((err, req, res, next) => {
+  res.status(500).json({ error: err.message });
+});
 
 //test route
 app.route("/").get((req, res) => {
