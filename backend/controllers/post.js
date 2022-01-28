@@ -250,3 +250,13 @@ export const getRelatedPosts = async (req, res) => {
     })),
   });
 };
+
+export const uploadImage = async (req, res) => {
+  const { file } = req;
+  if (!file) return res.status(401).json({ error: "Image file is missing! " });
+
+  const { secure_url } = await cloudinary.uploader.upload(file.path, {
+    public_id: `blog-app/posts/${randomstring.generate(15)}`,
+  });
+  res.status(201).json({ image: secure_url });
+};
