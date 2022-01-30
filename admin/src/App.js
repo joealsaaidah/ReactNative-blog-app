@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { AiOutlineMenuFold, AiOutlineMenuUnfold } from "react-icons/ai";
 
-function App() {
+const App = () => {
+  const [closedNav, setClosedNav] = useState(false);
+
+  const toggleNav = () => {
+    setClosedNav(!closedNav);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='flex'>
+      {/* nav section */}
+      <div
+        className={`${
+          closedNav ? "w-16" : "w-56"
+        } h-screen bg-red-500 transition-width `}
+      ></div>
+      {/* content section */}
+      <div className='flex-1 min-h-screen bg-blue-100'>
+        <button>
+          {closedNav ? (
+            <AiOutlineMenuUnfold size={25} onClick={toggleNav} />
+          ) : (
+            <AiOutlineMenuFold size={25} onClick={toggleNav} />
+          )}
+        </button>
+      </div>
     </div>
   );
-}
+};
 
 export default App;
