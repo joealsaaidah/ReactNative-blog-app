@@ -201,11 +201,13 @@ export const getPosts = async (req, res) => {
       slug: post.slug,
       thumbnail: post.thumbnail?.url,
       author: post.author,
+      createdAt: post.createdAt,
+      tags: post.tags,
     })),
   });
 };
 
-export const seatchPost = async (req, res) => {
+export const searchPost = async (req, res) => {
   const { title } = req.query;
   if (!title.trim())
     return res.status(401).json({ error: "search query is missing!" });

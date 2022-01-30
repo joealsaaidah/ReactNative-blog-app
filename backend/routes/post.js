@@ -6,7 +6,7 @@ import {
   getPost,
   getFeaturedPosts,
   getPosts,
-  seatchPost,
+  searchPost,
   getRelatedPosts,
   uploadImage,
 } from "../controllers/post.js";
@@ -39,7 +39,7 @@ router.route("/:postId").delete(deletePost);
 router.route("/single/:slug").get(getPost);
 router.route("/featured-posts").get(getFeaturedPosts);
 router.route("/posts").get(getPosts);
-router.route("/search").get(seatchPost);
+router.route("/search").get(searchPost);
 router.route("/related-posts/:postId").get(getRelatedPosts);
 router.route("/upload-image").post(multer.single("image"), uploadImage);
 

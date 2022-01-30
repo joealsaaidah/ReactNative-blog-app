@@ -3,6 +3,7 @@ import connectToDB from "./config/db.js";
 import express from "express";
 import "express-async-errors";
 import morgan from "morgan";
+import cors from "cors";
 
 import postRouter from "./routes/post.js";
 
@@ -15,6 +16,7 @@ connectToDB();
 const app = express();
 
 //middlewares
+app.use(cors({ origin: "http://localhost:3000" }));
 app.use(express.json());
 app.use(morgan("dev"));
 app.use("/api/post", postRouter);
