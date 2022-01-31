@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getPosts } from "../api/post";
+import { deletePost, getPosts } from "../api/post";
 import PostCard from "./PostCard";
 
 let pageNo = 0;
@@ -30,21 +30,34 @@ const Home = () => {
     fetchPosts();
   };
 
+  const deleteHandler = async (postId) => {
+    const confirmed = window.confirm("Are you sure!");
+    if (!confirmed) return;
+    const { error, message } = await deletePost(postId);
+    if (error) return console.log(error);
+    console.log(message);
+    const newPosts = posts.filter((p) => p.id !== postId);
+    setPosts(newPosts);
+  };
+
   useEffect(() => {
     fetchPosts();
   }, []);
 
   return (
     <div>
-      <div className='grid grid-cols-3 gap-3'>
+      <div className='grid grid-cols-3 gap-3 pb-5'>
         {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
+          <PostCard
+            key={post.id}
+            post={post}
+            deleteHandler={() => deleteHandler(post.id)}
+          />
         ))}
       </div>
-
-      <div className='flex items-center justify-center py-5 space-x-3'>
-        {paginationArray &&
-          paginationArray.map((_, index) => (
+      {paginationArray.length > 1 ? (
+        <div className='flex items-center justify-center py-5 space-x-3'>
+          {paginationArray.map((_, index) => (
             <button
               onClick={() => fetchMorePosts(index)}
               className={
@@ -56,7 +69,8 @@ const Home = () => {
               {index + 1}
             </button>
           ))}
-      </div>
+        </div>
+      ) : null}
     </div>
   );
 };

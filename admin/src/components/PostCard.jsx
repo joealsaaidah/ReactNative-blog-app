@@ -3,9 +3,10 @@ import dateFormat from "dateformat";
 import { BsFillPencilFill, BsTrash } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
-const PostCard = ({ post }) => {
+const PostCard = ({ post, deleteHandler }) => {
   if (!post) return null;
   const { title, thumbnail, tags, meta, createdAt, slug } = post;
+
   return (
     <div className='flex flex-col bg-white rounded shadow-sm'>
       <img
@@ -29,7 +30,10 @@ const PostCard = ({ post }) => {
           >
             <BsFillPencilFill />
           </Link>
-          <button className='flex items-center justify-center w-8 h-8 text-white bg-red-400 rounded-full hover:bg-red-600'>
+          <button
+            onClick={deleteHandler}
+            className='flex items-center justify-center w-8 h-8 text-white bg-red-400 rounded-full hover:bg-red-600'
+          >
             <BsTrash />
           </button>
         </div>
