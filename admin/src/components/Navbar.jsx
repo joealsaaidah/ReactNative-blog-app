@@ -6,7 +6,7 @@ const NavItem = ({ route, name, icon, closed }) => {
   const commonStyleClasses =
     "flex items-center space-x-2 w-full p-2 block text-white whitespace-nowrap";
   const activeClasses = `${commonStyleClasses} bg-blue-500 text-white`;
-  const inActiveClasses = `${commonStyleClasses} text-gray-500`;
+  const inActiveClasses = `${commonStyleClasses} text-gray-400`;
 
   return (
     <NavLink

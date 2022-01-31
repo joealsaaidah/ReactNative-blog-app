@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { deletePost, getPosts } from "../api/post";
+import { useSearch } from "../context/SearchProvider";
 import PostCard from "./PostCard";
 
 let pageNo = 0;
@@ -14,6 +15,8 @@ const getPaginationCount = (postsCount) => {
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [totalPostCount, setTotalPostCount] = useState(null);
+
+  const { searchResult } = useSearch();
 
   const fetchPosts = async () => {
     const { error, posts, postCount } = await getPosts(pageNo, POST_LIMIT);
@@ -44,21 +47,34 @@ const Home = () => {
     fetchPosts();
   }, []);
 
+  useEffect(() => {
+    console.log("searchResult", searchResult);
+  }, [searchResult]);
+
   return (
     <div>
       <div className='grid grid-cols-3 gap-3 pb-5'>
-        {posts.map((post) => (
-          <PostCard
-            key={post.id}
-            post={post}
-            deleteHandler={() => deleteHandler(post.id)}
-          />
-        ))}
+        {searchResult.length
+          ? searchResult.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                deleteHandler={() => deleteHandler(post.id)}
+              />
+            ))
+          : posts.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                deleteHandler={() => deleteHandler(post.id)}
+              />
+            ))}
       </div>
-      {paginationArray.length > 1 ? (
+      {paginationArray.length > 1 && !searchResult.length ? (
         <div className='flex items-center justify-center py-5 space-x-3'>
           {paginationArray.map((_, index) => (
             <button
+              key={index}
               onClick={() => fetchMorePosts(index)}
               className={
                 index === pageNo

@@ -217,6 +217,7 @@ export const searchPost = async (req, res) => {
 
   const posts = await Post.find({ title: { $regex: title, $options: "i" } });
 
+  console.log("server posts", posts.length);
   res.json({
     posts: posts.map((post) => ({
       id: post._id,
@@ -225,6 +226,8 @@ export const searchPost = async (req, res) => {
       slug: post.slug,
       thumbnail: post.thumbnail?.url,
       author: post.author,
+      createdAt: post.createdAt,
+      tags: post.tags,
     })),
   });
 };
