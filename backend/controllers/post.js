@@ -193,6 +193,8 @@ export const getPosts = async (req, res) => {
     .skip(parseInt(pageNo) * parseInt(limit))
     .limit(parseInt(limit));
 
+  const postCount = await Post.countDocuments();
+
   res.json({
     posts: posts.map((post) => ({
       id: post._id,
@@ -204,6 +206,7 @@ export const getPosts = async (req, res) => {
       createdAt: post.createdAt,
       tags: post.tags,
     })),
+    postCount,
   });
 };
 

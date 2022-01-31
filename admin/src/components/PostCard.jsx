@@ -8,13 +8,14 @@ const PostCard = ({ post }) => {
   const { title, thumbnail, tags, meta, createdAt, slug } = post;
   return (
     <div className='flex flex-col bg-white rounded shadow-sm'>
-      <img src={thumbnail || "./blank.jpg"} alt='post' />
+      <img
+        className='aspect-video'
+        src={thumbnail || "./blank.jpg"}
+        alt='post'
+      />
       <div className='flex flex-col justify-between flex-1 p-2'>
         <h1 className='text-lg font-semibold text-gray-700'>{title}</h1>
-        <p className='text-gray-500 truncate'>
-          Day names, month names and the AM/PM indicators can be localized by
-          passing an object with the necessary strings. For example:
-        </p>
+        <p className='text-gray-500 truncate'>{meta}</p>
         <div className='flex justify-between py-2'>
           <p className='text-sm text-gray-500 '>
             {dateFormat(createdAt, "mediumDate")}
