@@ -40,3 +40,16 @@ export const searchPosts = async (query) => {
     return { error: error.message || error };
   }
 };
+
+export const uploadImage = async (formData) => {
+  try {
+    const { data } = await client.post(`/post/upload-image`, formData);
+    return data;
+  } catch (error) {
+    const { response } = error;
+    if (response?.data) {
+      return response.data;
+    }
+    return { error: error.message || error };
+  }
+};
