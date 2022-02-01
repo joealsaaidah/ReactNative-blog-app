@@ -4,9 +4,9 @@ import { AiFillFileAdd, AiOutlineHome } from "react-icons/ai";
 
 const NavItem = ({ route, name, icon, closed }) => {
   const commonStyleClasses =
-    "flex items-center space-x-2 w-full p-2 block text-white whitespace-nowrap";
+    "flex items-center space-x-2 w-full p-2 block whitespace-nowrap";
   const activeClasses = `${commonStyleClasses} bg-blue-500 text-white`;
-  const inActiveClasses = `${commonStyleClasses} text-gray-400`;
+  const inActiveClasses = `${commonStyleClasses} text-gray-500`;
 
   return (
     <NavLink
