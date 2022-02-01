@@ -7,6 +7,7 @@ import {
   ImSpinner3,
 } from "react-icons/im";
 import { uploadImage } from "../api/post";
+import { useNotification } from "../context/NotificationProvider";
 
 const mdRules = [
   {
@@ -43,6 +44,7 @@ const CreatePost = () => {
   const [imageUploading, setImageUploading] = useState(false);
 
   const { title, featured, content, tags, meta } = postInfo;
+  const { updateNotification } = useNotification();
 
   const handleChange = ({ target }) => {
     const { value, name, checked } = target;
@@ -51,7 +53,7 @@ const CreatePost = () => {
     if (name === "thumbnail") {
       const file = target.files[0];
       if (!file.type?.includes("image")) {
-        return alert("this is not an image!");
+        return updateNotification("error", "this is not an image!");
       }
       setPostInfo({ ...postInfo, thumbnail: file });
       return setSelectedThumbnailURL(URL.createObjectURL(file));
@@ -64,7 +66,7 @@ const CreatePost = () => {
     if (name === "tags") {
       const newTags = tags.split(",");
       if (newTags.length > 4)
-        console.log("Only the first 4 tags will be selected");
+        updateNotification("warning", "Only the first 4 tags will be selected");
     }
     //meta
     if (name === "meta" && meta.length >= 150) {
@@ -79,7 +81,7 @@ const CreatePost = () => {
 
     const file = target.files[0];
     if (!file.type?.includes("image")) {
-      return alert("this is not an image!");
+      return updateNotification("error", "this is not an image!");
     }
 
     setImageUploading(true);

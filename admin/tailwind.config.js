@@ -4,6 +4,7 @@ module.exports = {
     extend: {
       transitionProperty: {
         width: "width",
+        buttom: "buttom",
       },
     },
   },
