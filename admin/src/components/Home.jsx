@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { deletePost, getPosts } from "../api/post";
+import { useNotification } from "../context/NotificationProvider";
 import { useSearch } from "../context/SearchProvider";
 import PostCard from "./PostCard";
 
@@ -16,11 +17,12 @@ const Home = () => {
   const [posts, setPosts] = useState([]);
   const [totalPostCount, setTotalPostCount] = useState(null);
 
+  const { updateNotification } = useNotification();
   const { searchResult } = useSearch();
 
   const fetchPosts = async () => {
     const { error, posts, postCount } = await getPosts(pageNo, POST_LIMIT);
-    if (error) return console.log(error);
+    if (error) return updateNotification("error", error);
     setPosts(posts);
     setTotalPostCount(postCount);
   };
@@ -37,14 +39,15 @@ const Home = () => {
     const confirmed = window.confirm("Are you sure!");
     if (!confirmed) return;
     const { error, message } = await deletePost(postId);
-    if (error) return console.log(error);
-    console.log(message);
+    if (error) return updateNotification("error", error);
+    updateNotification("success", message);
     const newPosts = posts.filter((p) => p.id !== postId);
     setPosts(newPosts);
   };
 
   useEffect(() => {
     fetchPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

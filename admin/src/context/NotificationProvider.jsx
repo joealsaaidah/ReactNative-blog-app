@@ -42,10 +42,10 @@ const NotificationProvider = ({ children }) => {
   useEffect(() => {
     notificationRef.current?.classList.remove("bottom-14", "opacity-0");
     notificationRef.current?.classList.add("bottom-10", "opacity-1");
-    return () => {
+    /* return () => {
       notificationRef.current?.classList.add("bottom-14", "opacity-0");
       notificationRef.current?.classList.remove("bottom-10", "opacity-1");
-    };
+    }; */
   }, [notification.value]);
 
   return (

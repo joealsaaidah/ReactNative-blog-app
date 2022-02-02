@@ -33,6 +33,7 @@ const UpdatePost = () => {
 
   useEffect(() => {
     fetchPost();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (notFound) return <NotFound />;
@@ -42,6 +43,7 @@ const UpdatePost = () => {
       initialPost={postInfo}
       postBtnTitle='Update'
       busy={busy}
+      resetAfterSubmit
     />
   );
 };
