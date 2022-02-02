@@ -124,7 +124,6 @@ export const updatePost = async (req, res) => {
   await post.save();
 
   res.status(201).json({
-    message: "post Created",
     post: {
       id: post._id,
       title,
@@ -152,7 +151,6 @@ export const getPost = async (req, res) => {
   const { title, meta, author, content, tags, createdAt } = post;
 
   res.status(201).json({
-    message: "post Created",
     post: {
       id: post._id,
       title,

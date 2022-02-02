@@ -36,6 +36,9 @@ const PostForm = ({
   const { updateNotification } = useNotification();
 
   useEffect(() => {
+    if (initialPost?.thumbnail) {
+      setSelectedThumbnailURL(initialPost.thumbnail);
+    }
     setPostInfo({ ...initialPost });
     return () => {
       if (resetAfterSubmit) resetForm();
