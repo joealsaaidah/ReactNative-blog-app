@@ -1,11 +1,8 @@
 import React from "react";
+import PostForm from "./PostForm";
 
 const UpdatePost = () => {
-  return (
-    <div>
-      <h1>Update Post</h1>
-    </div>
-  );
+  return <PostForm />;
 };
 
 export default UpdatePost;
