@@ -53,7 +53,6 @@ export const createPost = async (req, res) => {
   if (featured) await addToFeaturedPosts(newPost._id);
 
   res.status(201).json({
-    message: "post Created",
     post: {
       id: newPost._id,
       title,

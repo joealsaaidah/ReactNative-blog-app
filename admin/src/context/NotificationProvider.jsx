@@ -56,7 +56,7 @@ const NotificationProvider = ({ children }) => {
       {notification.value ? (
         <p
           ref={notificationRef}
-          className={`${backgroundColor}  rounded-full p-2 text-white fixed bottom-14 opacity-0  left-1/2 -translate-x-1/2 transition-all duration-150`}
+          className={`${backgroundColor}  rounded p-2 text-white fixed bottom-14 opacity-0  left-1/2 -translate-x-1/2 transition-all duration-150`}
         >
           {notification.value}
         </p>

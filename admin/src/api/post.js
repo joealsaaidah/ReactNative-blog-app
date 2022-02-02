@@ -53,3 +53,16 @@ export const uploadImage = async (formData) => {
     return { error: error.message || error };
   }
 };
+
+export const createPost = async (formData) => {
+  try {
+    const { data } = await client.post(`/post/create`, formData);
+    return data;
+  } catch (error) {
+    const { response } = error;
+    if (response?.data) {
+      return response.data;
+    }
+    return { error: error.message || error };
+  }
+};

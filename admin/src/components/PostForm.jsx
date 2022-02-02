@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ImEye,
   ImFilePicture,
@@ -10,7 +10,7 @@ import { uploadImage } from "../api/post";
 import { useNotification } from "../context/NotificationProvider";
 import MarkdownHints from "./MarkdownHints";
 
-const defaultPost = {
+export const defaultPost = {
   title: "",
   thumbnail: "",
   featured: false,
@@ -19,7 +19,13 @@ const defaultPost = {
   meta: "",
 };
 
-const PostForm = () => {
+const PostForm = ({
+  onSubmit,
+  resetAfterSubmit,
+  busy,
+  postBtnTitle,
+  initialPost,
+}) => {
   const [postInfo, setPostInfo] = useState({ ...defaultPost });
   const [selectedThumbnailURL, setSelectedThumbnailURL] = useState("");
   const [imageUrlToCopy, setImageUrlToCopy] = useState("");
@@ -28,6 +34,13 @@ const PostForm = () => {
 
   const { title, featured, content, tags, meta } = postInfo;
   const { updateNotification } = useNotification();
+
+  useEffect(() => {
+    setPostInfo({ ...initialPost });
+    return () => {
+      if (resetAfterSubmit) resetForm();
+    };
+  }, [initialPost, resetAfterSubmit]);
 
   const handleChange = ({ target }) => {
     const { value, name, checked } = target;
@@ -44,7 +57,7 @@ const PostForm = () => {
     //featured clicked
     if (name === "featured") {
       localStorage.setItem(
-        "blogpost",
+        "blogPost",
         JSON.stringify({ ...postInfo, featured: checked })
       );
 
@@ -52,12 +65,12 @@ const PostForm = () => {
     }
     //tags
     if (name === "tags") {
-      const newTags = tags.split(",");
-      if (newTags.length > 4)
+      const newTags = tags?.split(",");
+      if (newTags?.length > 4)
         updateNotification("warning", "Only the first 4 tags will be selected");
     }
     //meta
-    if (name === "meta" && meta.length >= 150) {
+    if (name === "meta" && meta?.length >= 150) {
       return setPostInfo({ ...postInfo, [meta]: value.substring(0, 149) });
     }
     const newPost = { ...postInfo, [name]: value };
@@ -89,8 +102,48 @@ const PostForm = () => {
     navigator.clipboard.writeText(textToCopy);
   };
 
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    //validate inputs
+    const { title, content, tags, meta } = postInfo;
+    if (!title.trim()) return updateNotification("error", "Title is missing!");
+    if (!content.trim())
+      return updateNotification("error", "Content is missing!");
+    if (!tags.trim()) return updateNotification("error", "Tags are missing!");
+    if (!meta.trim())
+      return updateNotification("error", "Meta description is missing!");
+
+    // Create slug
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-zA-Z]/g, " ")
+      .split(" ")
+      .filter((item) => item.trim())
+      .join("-");
+
+    //Prepare tags
+    const newTags = tags
+      .split(",")
+      .map((item) => item.trim())
+      .slice(0, 4);
+
+    // prepare thumbnail
+    const formData = new FormData();
+    const finalPost = { ...postInfo, tags: JSON.stringify(newTags), slug };
+    for (let key in finalPost) {
+      formData.append(key, finalPost[key]);
+    }
+    onSubmit(formData);
+    if (resetAfterSubmit) resetForm();
+  };
+  const resetForm = () => {
+    setPostInfo({ ...defaultPost });
+    localStorage.removeItem("blogPost");
+  };
+
   return (
-    <form className='flex p-2'>
+    <form onSubmit={submitHandler} className='flex p-2'>
       {/* Left Side */}
       <div className='flex flex-col w-9/12 h-screen space-y-3'>
         {/* Title and  Submit*/}
@@ -113,8 +166,12 @@ const PostForm = () => {
               <ImEye />
               <span>View</span>
             </button>
-            <button className='h-10 px-5 text-white transition bg-blue-500 rounded hover:text-blue-500 ring-blue-500 hover:bg-transparent hover:ring-1 w-36'>
-              Post
+            <button className='h-10 text-white transition bg-blue-500 rounded hover:text-blue-500 ring-blue-500 hover:bg-transparent hover:ring-1 w-36'>
+              {busy ? (
+                <ImSpinner3 className='mx-auto text-xl animate-spin' />
+              ) : (
+                postBtnTitle
+              )}
             </button>
           </div>
         </div>
@@ -148,7 +205,6 @@ const PostForm = () => {
           placeholder='Post title'
           type='text'
           onChange={handleChange}
-          onFocus={() => setDisplayMarkdownHints(false)}
         />
         {/* image input  */}
         <div className='flex space-x-2'>
@@ -201,6 +257,7 @@ const PostForm = () => {
           placeholder='## Markdown'
           onChange={handleChange}
           onFocus={() => setDisplayMarkdownHints(true)}
+          onBlur={() => setDisplayMarkdownHints(false)}
         ></textarea>
 
         {/* Tags input */}
@@ -221,7 +278,7 @@ const PostForm = () => {
         {/* meta description input */}
         <div>
           <label className='text-gray-500' htmlFor='meta'>
-            Meta description {meta.length} / 150
+            Meta description {meta?.length} / 150
           </label>
           <textarea
             value={meta}
