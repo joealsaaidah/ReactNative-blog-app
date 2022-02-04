@@ -1,7 +1,4 @@
-node_modules
-.env
-.env.local
-
+node_modules/
 .expo/
 dist/
 npm-debug.*
@@ -13,6 +10,5 @@ npm-debug.*
 *.orig.*
 web-build/
 
-admin/build
-admin/.pnp
-admin/.pnp.js
+# macOS
+.DS_Store
